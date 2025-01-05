@@ -5,7 +5,7 @@ FROM amazoncorretto:21
 WORKDIR /app
 
 # Copy the packaged JAR file into the container
-COPY target/ci-cd-learning-0.0.1-SNAPSHOT.jar.jar app.jar
+COPY target/ci-cd-learning-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port
 EXPOSE 8080
