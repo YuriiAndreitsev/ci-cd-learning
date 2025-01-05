@@ -1,0 +1,43 @@
+name: CI/CD with Kubernetes (Kind)
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Kind
+      - name: Set up Kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          chmod +x kind
+          sudo mv kind /usr/local/bin/
+          kind create cluster --name ci-cluster
+
+      # Step 3: Set up Kubectl
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          kubectl-version: 'v1.27.4'
+
+      # Step 4: Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t my-app:${{ github.sha }} .
+
+      # Step 5: Load Image into Kind Cluster
+      - name: Load Docker Image into Kind
+        run: kind load docker-image my-app:${{ github.sha }} --name ci-cluster
+
+      # Step 6: Apply Kubernetes Manifests
+      - name: Apply Kubernetes Manifests
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl rollout status deployment/my-app-deployment
