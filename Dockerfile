@@ -3,11 +3,12 @@ FROM amazoncorretto:21
 
 # Set the working directory in the container
 WORKDIR /app
-COPY .docker/entrypoint.sh \
+
+COPY entrypoint.sh \
      /app/
 
 RUN chmod +x entrypoint.sh
 
-COPY ./ci-cd-learning-0.0.1-SNAPSHOT.jar app.jar
+COPY ./target/ci-cd-learning-0.0.1-SNAPSHOT.jar app.jar
 
 CMD ["./entrypoint.sh"]
