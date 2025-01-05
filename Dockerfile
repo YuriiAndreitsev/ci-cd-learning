@@ -3,12 +3,11 @@ FROM amazoncorretto:21
 
 # Set the working directory in the container
 WORKDIR /app
+COPY .docker/entrypoint.sh \
+     /app/
 
-# Copy the packaged JAR file into the container
-COPY target/ci-cd-learning-0.0.1-SNAPSHOT.jar app.jar
+RUN chmod +x entrypoint.sh
 
-# Expose the application port
-EXPOSE 8080
+COPY ./ci-cd-learning-0.0.1-SNAPSHOT.jar app.jar
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["./entrypoint.sh"]
